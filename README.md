@@ -1,5 +1,5 @@
 # MaestroOps
-### Production-Grade DevSecOps + GitOps Platform on AWS EKS 
+### Production-Grade DevSecOps + GitOps Platform on AWS EKS
 
 <p align="center">
   <img src="./Devops-Mega-Project-Jenkins-ArgoCD-EKS/Assets/DevSecOps+GitOps.gif" />
