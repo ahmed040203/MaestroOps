@@ -3,6 +3,8 @@ pipeline {
 
     environment {
         DOCKER_USER = "ahmed30103"
+        SNS_TOPIC   = "arn:aws:sns:us-east-2:897345560390:maestroops-notifications"
+        AWS_REGION  = "us-east-2"
     }
 
     parameters {
@@ -55,6 +57,27 @@ pipeline {
                     '''
                 }
             }
+        }
+    }
+
+    post {
+        success {
+            sh """
+                aws sns publish \
+                  --topic-arn "${SNS_TOPIC}" \
+                  --subject "MaestroOps CD - SUCCESS (Build #${BUILD_NUMBER})" \
+                  --message "Deployment succeeded. Frontend: ${params.FRONTEND_DOCKER_TAG}, Backend: ${params.BACKEND_DOCKER_TAG}. ArgoCD will sync the new manifests to EKS." \
+                  --region ${AWS_REGION}
+            """
+        }
+        failure {
+            sh """
+                aws sns publish \
+                  --topic-arn "${SNS_TOPIC}" \
+                  --subject "MaestroOps CD - FAILURE (Build #${BUILD_NUMBER})" \
+                  --message "Deployment failed at build #${BUILD_NUMBER}. Check Jenkins console: ${BUILD_URL}" \
+                  --region ${AWS_REGION}
+            """
         }
     }
 }
